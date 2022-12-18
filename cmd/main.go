@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	"github.com/herwando/mini-wallet/module/wallet/handler"
+	httpHandler "github.com/herwando/mini-wallet/module/wallet/module/wallet/entity/interface/handler"
 	"github.com/herwando/mini-wallet/module/wallet/repository"
 	"github.com/herwando/mini-wallet/module/wallet/usecase"
-	"github.com/julienschmidt/httprouter"
 	"github.com/subosito/gotenv"
 )
 
@@ -22,8 +22,13 @@ func main() {
 	walletHandler := handler.NewWalletHandler(walletUsecase)
 
 	port := os.Getenv("APP_PORT")
-	router := httprouter.New()
-	router.GET("/ping", walletHandler.Ping)
+	handler := httpHandler.Handler{
+		WalletHandler: walletHandler,
+	}
+
+	router := newRoutes(moduleHandler{
+		httpHandler: handler,
+	})
 
 	fmt.Println("mini-wallet is now running and ready to listen at port", port)
 	err := http.ListenAndServe(":"+port, router)
