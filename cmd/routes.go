@@ -29,6 +29,8 @@ func newRoutes(mHandler moduleHandler) *chi.Mux {
 			wallet.Post("/", httpHandler.WalletHandler.Enabled)
 			wallet.Patch("/", httpHandler.WalletHandler.Disable)
 			wallet.Get("/", httpHandler.WalletHandler.GetWallet)
+			wallet.Post("/deposits", httpHandler.DepositHandler.Create)
+			wallet.Post("/withdrawals", httpHandler.WithdrawalHandler.Create)
 		})
 	})
 

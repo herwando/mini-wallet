@@ -24,11 +24,19 @@ func main() {
 	accountRepo := repository.NewAccountRepository(db)
 	accountUsecase := usecase.NewAccountUsecase(accountRepo)
 	accountHandler := handler.NewAccountHandler(accountUsecase)
+	depositRepo := repository.NewDepositRepository(db)
+	depositUsecase := usecase.NewDepositUsecase(depositRepo, walletRepo)
+	depositHandler := handler.NewDepositHandler(depositUsecase)
+	withdrawalRepo := repository.NewWithdrawalRepository(db)
+	withdrawalUsecase := usecase.NewWithdrawalUsecase(withdrawalRepo, walletRepo)
+	withdrawalHandler := handler.NewWithdrawalHandler(withdrawalUsecase)
 
 	port := os.Getenv("APP_PORT")
 	handler := &httpHandler.Handler{
-		WalletHandler:  walletHandler,
-		AccountHandler: accountHandler,
+		WalletHandler:     walletHandler,
+		AccountHandler:    accountHandler,
+		DepositHandler:    depositHandler,
+		WithdrawalHandler: withdrawalHandler,
 	}
 	authHandler := &middlewares.Module{}
 
