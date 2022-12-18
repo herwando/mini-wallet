@@ -1,4 +1,4 @@
-module mini-wallet
+module github.com/herwando/mini-wallet
 
 go 1.18
 
