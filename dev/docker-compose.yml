@@ -1,0 +1,15 @@
+version: '3'
+services:
+  psql:
+    image: "postgres"
+    ports:
+      - 15432:5432
+    env_file:
+      - database.env
+    volumes:
+      - psql-data:/var/lib/postgresql/data/
+    container_name: psql-wallets
+
+volumes:
+  psql-data:
+    driver: local
