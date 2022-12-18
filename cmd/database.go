@@ -37,7 +37,5 @@ func getDBConnection() *sql.DB {
 		panic(err)
 	}
 
-	defer db.Close()
-
 	return db
 }

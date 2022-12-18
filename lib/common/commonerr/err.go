@@ -183,6 +183,13 @@ func SetNewInternalError() *ErrorMessage {
 	return SetNewError(http.StatusInternalServerError, InternalServerName, InternalServerDescription)
 }
 
+// SetNewUnprocessableEntity is function return new error message with internal server error standard code(422).
+// It support to set error name and error description
+//
+func SetNewUnprocessableEntity(errorName, errDesc string) *ErrorMessage {
+	return SetNewError(http.StatusUnprocessableEntity, errorName, errDesc)
+}
+
 //
 // SetNewUnauthorizedError is function return new error message with unauthorized error code(401).
 // It support to set error name and error description
@@ -252,6 +259,13 @@ func (errorMessage *ErrorMessage) ToString() string {
 // Error to implement error interface
 func (errorMessage *ErrorMessage) Error() string {
 	return errorMessage.ToString()
+}
+
+//
+// Errorln is for print error
+//
+func (errorMessage *ErrorMessage) Errorln(dataErr ...interface{}) *ErrorMessage {
+	return errorMessage
 }
 
 //

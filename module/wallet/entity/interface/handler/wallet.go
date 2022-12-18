@@ -5,5 +5,7 @@ import (
 )
 
 type WalletHandler interface {
-	Ping(w http.ResponseWriter, r *http.Request)
+	Enabled(w http.ResponseWriter, r *http.Request)
+	Disable(w http.ResponseWriter, r *http.Request)
+	GetWallet(w http.ResponseWriter, r *http.Request)
 }
