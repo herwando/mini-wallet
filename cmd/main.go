@@ -5,25 +5,25 @@ import (
 	"net/http"
 	"os"
 	"strings"
-	"sync"
 
+	"github.com/herwando/mini-wallet/module/wallet/handler"
+	"github.com/herwando/mini-wallet/module/wallet/repository"
+	"github.com/herwando/mini-wallet/module/wallet/usecase"
 	"github.com/julienschmidt/httprouter"
 	"github.com/subosito/gotenv"
 )
 
-var (
-	once sync.Once
-)
-
 func main() {
-	once.Do(func() {
-		loadEnv()
-		_ = getDBConnection()
-	})
+	loadEnv()
+	db := getDBConnection()
+
+	walletRepo := repository.NewWalletRepository(db)
+	walletUsecase := usecase.NewWalletUsecase(walletRepo)
+	walletHandler := handler.NewWalletHandler(walletUsecase)
 
 	port := os.Getenv("APP_PORT")
 	router := httprouter.New()
-	//router.GET("/healthz", swHandler.Healthz)
+	router.GET("/ping", walletHandler.Ping)
 
 	fmt.Println("mini-wallet is now running and ready to listen at port", port)
 	err := http.ListenAndServe(":"+port, router)
