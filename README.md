@@ -1,26 +1,54 @@
-# SKU Management
+# Mini Wallet
 
-[SKU Management as A Service](https://bukalapak.atlassian.net/wiki/spaces/BL20/pages/2207758194/Draft+SKU+Management+as+A+Service)
+#### Prerequisite
 
-## Setup
-- Run dependency
-```
-make docker-up
-```
+- Git
+- Golang 1.18
+- [PostgreSQL](https://www.postgresql.org/download/)
+
+#### Setup
+
+- Install Git
+  See [Git Installation](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+
+- Install Golang
+
+- Install Docker
+  See [docker-compose](https://docs.docker.com/compose/install/
+
+- Setup PostgreSQL with docker-compose. Adjust the configuration as needed, by default PostgreSQL will be exposed via port 15432. Also adjust PostgreSQL env as needed in [database.env](https://github.com/herwando/mini-wallet/blob/main/dev/database.env). After that, run docker-compose up.
+  ```sh
+  cd dev && docker-compose up
+  ```
+
+- Clone this repository
+  ```sh
+  git clone git@github.com:herwando/mini-wallet.git
+  cd mini-wallet
+  ```
+
+- Install dependencies
+  ```sh
+  make dep
+  ```
+
+- Copy env.sample and if necessary, modify the env value(s)
+  ```sh
+  cp env.sample .env
+  ```
+
 - Download database migration tools
-```
-make tool-migrate
-```
-- Run migration for each module. See makefile for custom database env config. Also see more argument on [golang-migrate](https://github.com/golang-migrate/migrate)
-```
-MIGRATE_ARGS=up make migrate
-```
-- Run golang main on cmd
-```
-go run cmd/rpc/main.go
-```
+  ```sh
+  make tool-migrate
+  ```
 
-## Useful Links
-- [Core Services Developer Tutorials](https://bukalapak.atlassian.net/wiki/spaces/CIS/pages/2248710958/Developer+Tutorials)
-- [Core Services Developer Guidelines](https://bukalapak.atlassian.net/wiki/spaces/CIS/pages/2225867497/Developer+Guidelines)
-- [Developing a Domain](https://bukalapak.atlassian.net/wiki/spaces/CIS/pages/2248875394/Developing+a+Domain)
+- Run migration for each module. 
+  ```sh
+  make migrate-up
+  ```
+
+- Run golang main on cmd
+  ```sh
+  make run
+  ```
+
