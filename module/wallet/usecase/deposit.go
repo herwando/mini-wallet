@@ -6,19 +6,18 @@ import (
 	"time"
 
 	"github.com/herwando/mini-wallet/module/wallet/entity/model"
-	"github.com/herwando/mini-wallet/module/wallet/repository"
 )
 
 type DepositUsecase struct {
-	repo       *repository.DepositRepository
-	walletRepo *repository.WalletRepository
+	repo       DepositRepository
+	walletRepo WalletRepository
 }
 
 const (
 	SuccessStatus = 1
 )
 
-func NewDepositUsecase(repo *repository.DepositRepository, walletRepo *repository.WalletRepository) *DepositUsecase {
+func NewDepositUsecase(repo DepositRepository, walletRepo WalletRepository) *DepositUsecase {
 	return &DepositUsecase{
 		repo:       repo,
 		walletRepo: walletRepo,

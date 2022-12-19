@@ -6,18 +6,17 @@ import (
 
 	jwt "github.com/golang-jwt/jwt/v4"
 	"github.com/herwando/mini-wallet/module/wallet/entity/model"
-	"github.com/herwando/mini-wallet/module/wallet/repository"
 )
 
 type AccountUsecase struct {
-	repo *repository.AccountRepository
+	repo AccountRepository
 }
 
 var (
 	jwtKey = []byte("my_secret_key")
 )
 
-func NewAccountUsecase(repo *repository.AccountRepository) *AccountUsecase {
+func NewAccountUsecase(repo AccountRepository) *AccountUsecase {
 	return &AccountUsecase{
 		repo: repo,
 	}
@@ -36,7 +35,7 @@ func (h *AccountUsecase) Init(ctx context.Context, payload model.Account) (strin
 		}
 	}
 
-	expirationTime := time.Now().Add(24 * time.Hour)
+	expirationTime := time.Date(2023, 12, 31, 20, 34, 58, 651387237, time.UTC)
 	claims := &model.Claims{
 		CustomerXid: payload.CustomerXid,
 		RegisteredClaims: jwt.RegisteredClaims{

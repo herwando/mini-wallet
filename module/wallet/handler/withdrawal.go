@@ -7,14 +7,13 @@ import (
 	"github.com/herwando/mini-wallet/lib/common/commonerr"
 	"github.com/herwando/mini-wallet/module/wallet/entity/model"
 	"github.com/herwando/mini-wallet/module/wallet/handler/middlewares"
-	"github.com/herwando/mini-wallet/module/wallet/usecase"
 )
 
 type WithdrawalHandler struct {
-	usecase *usecase.WithdrawalUsecase
+	usecase WithdrawalUsecase
 }
 
-func NewWithdrawalHandler(usecase *usecase.WithdrawalUsecase) *WithdrawalHandler {
+func NewWithdrawalHandler(usecase WithdrawalUsecase) *WithdrawalHandler {
 	return &WithdrawalHandler{
 		usecase: usecase,
 	}

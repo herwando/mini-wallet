@@ -26,20 +26,21 @@ func (r *AccountRepository) ExistAccountByCustomerXid(ctx context.Context, custo
 
 	account := model.Account{}
 	row := r.db.QueryRowContext(ctx, query, customerXid)
-	if err := row.Scan(&account); err != nil {
+	if err := row.Scan(&account.CustomerXid); err != nil {
 		if err == sql.ErrNoRows {
-			return true, nil
+			return false, nil
 		}
-		return true, err
+		return false, err
 	}
 
-	return false, nil
+	return true, nil
 }
 
 func (r *AccountRepository) CreateAccount(ctx context.Context, account *model.Account) error {
-	_, err := r.db.ExecContext(ctx, `INSERT INTO
+	row := r.db.QueryRowContext(ctx, `INSERT INTO
 		accounts (id) 
-		VALUES (:id)`, &account)
+		VALUES ($1) RETURNING id`, account.CustomerXid)
+	err := row.Scan(&account.CustomerXid)
 	if err != nil {
 		return err
 	}

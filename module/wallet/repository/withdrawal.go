@@ -11,6 +11,11 @@ type WithdrawalRepository struct {
 	db *sql.DB
 }
 
+type WithdrawalRepositoryInterface interface {
+	GetWithdrawalByReferenceId(ctx context.Context, referenceId string) (*model.Withdrawal, error)
+	CreateWithdrawal(ctx context.Context, withdrawal *model.Withdrawal, wallet *model.Wallet) (*model.Withdrawal, error)
+}
+
 func NewWithdrawalRepository(db *sql.DB) *WithdrawalRepository {
 	return &WithdrawalRepository{
 		db: db,

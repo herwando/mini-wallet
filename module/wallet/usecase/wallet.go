@@ -6,11 +6,10 @@ import (
 	"time"
 
 	"github.com/herwando/mini-wallet/module/wallet/entity/model"
-	"github.com/herwando/mini-wallet/module/wallet/repository"
 )
 
 type WalletUsecase struct {
-	repo *repository.WalletRepository
+	repo WalletRepository
 }
 
 const (
@@ -18,7 +17,7 @@ const (
 	DisabledStatus = 2
 )
 
-func NewWalletUsecase(repo *repository.WalletRepository) *WalletUsecase {
+func NewWalletUsecase(repo WalletRepository) *WalletUsecase {
 	return &WalletUsecase{
 		repo: repo,
 	}
@@ -67,6 +66,10 @@ func (h *WalletUsecase) Disable(ctx context.Context, customerXid string) (*model
 
 	if wallet == nil {
 		return nil, errors.New("Wallet not enable")
+	} else {
+		if wallet.Status == DisabledStatus {
+			return nil, errors.New("Wallet already disabled")
+		}
 	}
 
 	wallet.Status = DisabledStatus

@@ -6,15 +6,14 @@ import (
 	"time"
 
 	"github.com/herwando/mini-wallet/module/wallet/entity/model"
-	"github.com/herwando/mini-wallet/module/wallet/repository"
 )
 
 type WithdrawalUsecase struct {
-	repo       *repository.WithdrawalRepository
-	walletRepo *repository.WalletRepository
+	repo       WithdrawalRepository
+	walletRepo WalletRepository
 }
 
-func NewWithdrawalUsecase(repo *repository.WithdrawalRepository, walletRepo *repository.WalletRepository) *WithdrawalUsecase {
+func NewWithdrawalUsecase(repo WithdrawalRepository, walletRepo WalletRepository) *WithdrawalUsecase {
 	return &WithdrawalUsecase{
 		repo:       repo,
 		walletRepo: walletRepo,
