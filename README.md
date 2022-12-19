@@ -52,3 +52,45 @@
   make run
   ```
 
+#### API Documentaion
+
+- POST Initialize my account for wallet
+```sh
+curl --location --request POST 'http://localhost/api/v1/init' \
+--form 'customer_xid="ea0212d3-abd6-406f-8c67-868e814a2436"'
+```
+
+- POST Enable my wallet
+```sh
+curl --location --request POST 'http://localhost/api/v1/wallet' \
+--header 'Authorization: Token 6b3f7dc70abe8aed3e56658b86fa508b472bf238'
+```
+
+- GET View my wallet balance
+```sh
+curl --location --request GET 'http://localhost/api/v1/wallet' \
+--header 'Authorization: Token 6b3f7dc70abe8aed3e56658b86fa508b472bf238'
+```
+
+- POST Add virtual money to my wallet
+```sh
+curl --location --request POST 'http://localhost/api/v1/wallet/deposits' \
+--header 'Authorization: Token 6b3f7dc70abe8aed3e56658b86fa508b472bf238' \
+--form 'amount="100000"' \
+--form 'reference_id="50535246-dcb2-4929-8cc9-004ea06f5241"'
+```
+
+- POST Use virtual money from my wallet
+```sh
+curl --location --request POST 'http://localhost/api/v1/wallet/withdrawals' \
+--header 'Authorization: Token 6b3f7dc70abe8aed3e56658b86fa508b472bf238' \
+--form 'amount="60000"' \
+--form 'reference_id="4b01c9bb-3acd-47dc-87db-d9ac483d20b2"'
+```
+
+- PATCH Disable my wallet
+```sh
+curl --location --request PATCH 'http://localhost/api/v1/wallet' \
+--header 'Authorization: Token 6b3f7dc70abe8aed3e56658b86fa508b472bf238' \
+--form 'is_disabled="true"'
+```

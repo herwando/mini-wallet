@@ -139,7 +139,7 @@ func TestHandlerWallet_Disable(t *testing.T) {
 				r: func() *http.Request {
 					var param = url.Values{}
 					param.Add("is_disabled", "true")
-					req, _ := http.NewRequest(http.MethodPost, "", strings.NewReader(param.Encode()))
+					req, _ := http.NewRequest(http.MethodPatch, "", strings.NewReader(param.Encode()))
 					req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 					req.Header.Set("Authorization", mockToken)
 					req = req.WithContext(mockCtx)
@@ -158,7 +158,7 @@ func TestHandlerWallet_Disable(t *testing.T) {
 				r: func() *http.Request {
 					var param = url.Values{}
 					param.Add("is_disabled", "true")
-					req, _ := http.NewRequest(http.MethodPost, "", strings.NewReader(param.Encode()))
+					req, _ := http.NewRequest(http.MethodPatch, "", strings.NewReader(param.Encode()))
 					req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 					req.Header.Set("Authorization", mockToken)
 					req = req.WithContext(mockCtxEmpty)
@@ -176,7 +176,7 @@ func TestHandlerWallet_Disable(t *testing.T) {
 				r: func() *http.Request {
 					var param = url.Values{}
 					param.Add("is_disabled", "true")
-					req, _ := http.NewRequest(http.MethodPost, "", strings.NewReader(param.Encode()))
+					req, _ := http.NewRequest(http.MethodPatch, "", strings.NewReader(param.Encode()))
 					req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 					req.Header.Set("Authorization", mockToken)
 					req = req.WithContext(mockCtx)
