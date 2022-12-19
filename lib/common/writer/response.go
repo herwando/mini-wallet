@@ -24,6 +24,10 @@ func WriteOK(ctx context.Context, w http.ResponseWriter, data interface{}) {
 	write(ctx, w, data, http.StatusOK)
 }
 
+func WriteAccepted(ctx context.Context, w http.ResponseWriter, data interface{}) {
+	write(ctx, w, data, http.StatusAccepted)
+}
+
 // WriteStrOK is a helper around Response.Write with status OK
 func WriteStrOK(ctx context.Context, w http.ResponseWriter) {
 	set(ctx, w, ok, http.StatusOK)

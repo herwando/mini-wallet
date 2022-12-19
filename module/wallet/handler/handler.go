@@ -7,6 +7,7 @@ import (
 var (
 	writerWriteStrOK        = writer.WriteStrOK
 	writerWriteData         = writer.WriteOK
+	writerWriteDataAccepted = writer.WriteAccepted
 	writerWriteJSONAPIError = writer.WriteJSONAPIError
 )
 

@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/herwando/mini-wallet/lib/common/commonerr"
 	"github.com/herwando/mini-wallet/module/wallet/entity/model"
 	"github.com/herwando/mini-wallet/module/wallet/handler/middlewares"
+	"github.com/shopspring/decimal"
 )
 
 type WithdrawalHandler struct {
@@ -20,13 +20,17 @@ func NewWithdrawalHandler(usecase WithdrawalUsecase) *WithdrawalHandler {
 }
 
 func (h *WithdrawalHandler) Create(w http.ResponseWriter, r *http.Request) {
+	r.ParseMultipartForm(32 << 20)
 	ctx := r.Context()
 	var payload model.PayloadWithdrawal
-	err := json.NewDecoder(r.Body).Decode(&payload)
+	payload.ReferenceID = r.Form.Get("reference_id")
+	amount, err := decimal.NewFromString(r.Form.Get("amount"))
 	if err != nil {
-		writerWriteJSONAPIError(ctx, w, commonerr.SetNewBadRequest("Request invalid", "Body not completed"))
+		writerWriteJSONAPIError(ctx, w, commonerr.SetNewBadRequest("Request invalid", "Params amount not valid"))
 		return
 	}
+
+	payload.Amount = amount
 
 	if payload.ReferenceID == "" {
 		writerWriteJSONAPIError(ctx, w, commonerr.SetNewBadRequest("Request invalid", "Params reference_id empty"))
@@ -55,5 +59,5 @@ func (h *WithdrawalHandler) Create(w http.ResponseWriter, r *http.Request) {
 		Status: "success",
 	}
 
-	writerWriteData(ctx, w, response)
+	writerWriteDataAccepted(ctx, w, response)
 }

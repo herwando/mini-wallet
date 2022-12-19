@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/herwando/mini-wallet/lib/common/commonerr"
@@ -19,16 +18,13 @@ func NewAccountHandler(usecase AccountUsecase) *AccountHandler {
 }
 
 func (h *AccountHandler) Init(w http.ResponseWriter, r *http.Request) {
+	r.ParseMultipartForm(32 << 20)
 	ctx := r.Context()
 	var payload model.Account
-	err := json.NewDecoder(r.Body).Decode(&payload)
-	if err != nil {
-		writerWriteJSONAPIError(ctx, w, commonerr.SetNewBadRequest("Request invalid", "Body not completed"))
-		return
-	}
+	payload.CustomerXid = r.Form.Get("customer_xid")
 
 	if payload.CustomerXid == "" {
-		writerWriteJSONAPIError(ctx, w, commonerr.SetNewBadRequest("Request invalid", "Params customer_xid empty"))
+		writerWriteJSONAPIError(ctx, w, commonerr.SetNewBadRequest("customer_xid", "Missing data for required field"))
 		return
 	}
 

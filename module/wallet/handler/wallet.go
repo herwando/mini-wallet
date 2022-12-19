@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/herwando/mini-wallet/lib/common/commonerr"
@@ -42,12 +41,12 @@ func (h *WalletHandler) Enabled(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *WalletHandler) Disable(w http.ResponseWriter, r *http.Request) {
+	r.ParseMultipartForm(32 << 20)
 	ctx := r.Context()
 	var payload model.PayloadDisable
-	err := json.NewDecoder(r.Body).Decode(&payload)
-	if err != nil {
-		writerWriteJSONAPIError(ctx, w, commonerr.SetNewBadRequest("Request invalid", "Body not completed"))
-		return
+	isDisable := r.Form.Get("is_disabled")
+	if isDisable == "true" {
+		payload.IsDisabled = true
 	}
 
 	if !payload.IsDisabled {
@@ -85,6 +84,10 @@ func (h *WalletHandler) GetWallet(w http.ResponseWriter, r *http.Request) {
 
 	wallet, err := h.usecase.GetWallet(ctx, customerXid)
 	if err != nil {
+		if err.Error() == "Disabled" {
+			writerWriteJSONAPIError(ctx, w, commonerr.SetNewNotFound(err.Error()))
+			return
+		}
 		writerWriteJSONAPIError(ctx, w, commonerr.SetNewUnprocessableEntity("Wallet", err.Error()))
 		return
 	}

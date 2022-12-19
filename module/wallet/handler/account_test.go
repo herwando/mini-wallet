@@ -1,15 +1,14 @@
 package handler
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"errors"
 	"net/http"
+	"net/url"
+	"strings"
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/herwando/mini-wallet/module/wallet/entity/model"
 	mockUC "github.com/herwando/mini-wallet/module/wallet/handler/_mocks"
 )
 
@@ -21,16 +20,6 @@ func TestHandlerAccount_Init(t *testing.T) {
 	mockCtx := context.TODO()
 	mockError := errors.New("fake error")
 	mockToken := "exampletoken"
-	paramsReq := model.Account{
-		CustomerXid: "ea0212d3-abd6-406f-8c67-868e814a2436",
-	}
-	paramsEmpty := model.Wallet{}
-	paramsEmptyString := model.Account{
-		CustomerXid: "",
-	}
-	reqByte, _ := json.Marshal(&paramsReq)
-	reqByte2, _ := json.Marshal(&paramsEmpty)
-	reqByte3, _ := json.Marshal(&paramsEmptyString)
 
 	type args struct {
 		w http.ResponseWriter
@@ -45,8 +34,10 @@ func TestHandlerAccount_Init(t *testing.T) {
 			name: "Success",
 			args: args{
 				r: func() *http.Request {
-					req, _ := http.NewRequest(http.MethodPost, "", bytes.NewBuffer(reqByte))
-					req.Header.Set("Content-Type", "application/json")
+					var param = url.Values{}
+					param.Add("customer_xid", "ea0212d3-abd6-406f-8c67-868e814a2436")
+					req, _ := http.NewRequest(http.MethodPost, "", strings.NewReader(param.Encode()))
+					req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 					req = req.WithContext(mockCtx)
 					return req
 				}(),
@@ -58,26 +49,12 @@ func TestHandlerAccount_Init(t *testing.T) {
 			},
 		},
 		{
-			name: "Failed params empty",
-			args: args{
-				r: func() *http.Request {
-					req, _ := http.NewRequest(http.MethodPost, "", bytes.NewBuffer(reqByte2))
-					req.Header.Set("Content-Type", "application/json")
-					req = req.WithContext(mockCtx)
-					return req
-				}(),
-			},
-			patch: func() {
-				writerWriteJSONAPIError = func(ctx context.Context, w http.ResponseWriter, err error) {
-				}
-			},
-		},
-		{
 			name: "Failed params empty string",
 			args: args{
 				r: func() *http.Request {
-					req, _ := http.NewRequest(http.MethodPost, "", bytes.NewBuffer(reqByte3))
-					req.Header.Set("Content-Type", "application/json")
+					var param = url.Values{}
+					req, _ := http.NewRequest(http.MethodPost, "", strings.NewReader(param.Encode()))
+					req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 					req = req.WithContext(mockCtx)
 					return req
 				}(),
@@ -91,8 +68,10 @@ func TestHandlerAccount_Init(t *testing.T) {
 			name: "Failed usecase",
 			args: args{
 				r: func() *http.Request {
-					req, _ := http.NewRequest(http.MethodPost, "", bytes.NewBuffer(reqByte))
-					req.Header.Set("Content-Type", "application/json")
+					var param = url.Values{}
+					param.Add("customer_xid", "ea0212d3-abd6-406f-8c67-868e814a2436")
+					req, _ := http.NewRequest(http.MethodPost, "", strings.NewReader(param.Encode()))
+					req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 					req = req.WithContext(mockCtx)
 					return req
 				}(),

@@ -31,7 +31,7 @@ func (h *WalletUsecase) Enabled(ctx context.Context, customerXid string) (*model
 
 	if wallet != nil {
 		if wallet.Status == EnabledStatus {
-			return wallet, errors.New("Wallet already enabled")
+			return wallet, errors.New("Already enabled")
 		}
 
 		wallet.Status = EnabledStatus
@@ -95,7 +95,7 @@ func (h *WalletUsecase) GetWallet(ctx context.Context, customerXid string) (*mod
 	}
 
 	if infoWallet.Status == DisabledStatus {
-		return nil, errors.New("Wallet disabled")
+		return nil, errors.New("Disabled")
 	} else {
 		infoWallet.StatusMessage = "enabled"
 	}

@@ -1,11 +1,11 @@
 package handler
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"errors"
 	"net/http"
+	"net/url"
+	"strings"
 	"testing"
 	"time"
 
@@ -123,12 +123,6 @@ func TestHandlerWallet_Disable(t *testing.T) {
 		Balance:   decimal.NewFromInt(10000),
 	}
 	mockCtxEmpty := context.TODO()
-	paramsReq := model.PayloadDisable{
-		IsDisabled: true,
-	}
-	paramsEmpty := model.Wallet{}
-	reqByte, _ := json.Marshal(&paramsReq)
-	reqByte2, _ := json.Marshal(&paramsEmpty)
 
 	type args struct {
 		w http.ResponseWriter
@@ -143,8 +137,10 @@ func TestHandlerWallet_Disable(t *testing.T) {
 			name: "Success",
 			args: args{
 				r: func() *http.Request {
-					req, _ := http.NewRequest(http.MethodPatch, "", bytes.NewBuffer(reqByte))
-					req.Header.Set("Content-Type", "application/json")
+					var param = url.Values{}
+					param.Add("is_disabled", "true")
+					req, _ := http.NewRequest(http.MethodPost, "", strings.NewReader(param.Encode()))
+					req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 					req.Header.Set("Authorization", mockToken)
 					req = req.WithContext(mockCtx)
 					return req
@@ -157,27 +153,13 @@ func TestHandlerWallet_Disable(t *testing.T) {
 			},
 		},
 		{
-			name: "Failed params diff model",
-			args: args{
-				r: func() *http.Request {
-					req, _ := http.NewRequest(http.MethodPatch, "", bytes.NewBuffer(reqByte2))
-					req.Header.Set("Content-Type", "application/json")
-					req.Header.Set("Authorization", mockToken)
-					req = req.WithContext(mockCtx)
-					return req
-				}(),
-			},
-			patch: func() {
-				writerWriteJSONAPIError = func(ctx context.Context, w http.ResponseWriter, err error) {
-				}
-			},
-		},
-		{
 			name: "Failed token",
 			args: args{
 				r: func() *http.Request {
-					req, _ := http.NewRequest(http.MethodPatch, "", http.NoBody)
-					req.Header.Set("Content-Type", "application/json")
+					var param = url.Values{}
+					param.Add("is_disabled", "true")
+					req, _ := http.NewRequest(http.MethodPost, "", strings.NewReader(param.Encode()))
+					req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 					req.Header.Set("Authorization", mockToken)
 					req = req.WithContext(mockCtxEmpty)
 					return req
@@ -192,8 +174,10 @@ func TestHandlerWallet_Disable(t *testing.T) {
 			name: "Failed usecase",
 			args: args{
 				r: func() *http.Request {
-					req, _ := http.NewRequest(http.MethodPatch, "", bytes.NewBuffer(reqByte))
-					req.Header.Set("Content-Type", "application/json")
+					var param = url.Values{}
+					param.Add("is_disabled", "true")
+					req, _ := http.NewRequest(http.MethodPost, "", strings.NewReader(param.Encode()))
+					req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 					req.Header.Set("Authorization", mockToken)
 					req = req.WithContext(mockCtx)
 					return req

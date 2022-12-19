@@ -1,11 +1,11 @@
 package handler
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"errors"
 	"net/http"
+	"net/url"
+	"strings"
 	"testing"
 	"time"
 
@@ -24,24 +24,8 @@ func TestHandlerWithdrawal_Create(t *testing.T) {
 	mockError := errors.New("fake error")
 	mockCustomerXid := "ea0212d3-abd6-406f-8c67-868e814a2436"
 	mockToken := "Token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjdXN0b21lcl94aWQiOiJlYTAyMTJkMy1hYmQ2LTQwNmYtOGM2Ny04NjhlODE0YTI0MzYiLCJleHAiOjE2NzE0NjQwNDV9.hWYiJlo0bZiv3wxsr_6GOnIonmYjfex5gZR7ecbwB3U"
-	paramsReq := model.PayloadWithdrawal{
-		ReferenceID: "ea0212d3-abd6-406f-8c67-868e814a2436",
-		Amount:      decimal.NewFromInt(1000),
-	}
-	paramsEmpty := model.Wallet{}
-	paramsEmptyReference := model.PayloadWithdrawal{
-		ReferenceID: "",
-	}
-	paramsAmountZero := model.PayloadWithdrawal{
-		ReferenceID: "ea0212d3-abd6-406f-8c67-868e814a2436",
-		Amount:      decimal.NewFromInt(0),
-	}
 	mockCtx = context.WithValue(mockCtx, "AuthDetail", mockCustomerXid)
 	mockCtxEmpty := context.TODO()
-	reqByte, _ := json.Marshal(&paramsReq)
-	reqByte2, _ := json.Marshal(&paramsEmpty)
-	reqByte3, _ := json.Marshal(&paramsEmptyReference)
-	reqByte4, _ := json.Marshal(&paramsAmountZero)
 	now := time.Now()
 	mockWithdrawal := &model.Withdrawal{
 		ID:          "81401b03-60e0-4f20-afc6-419b3773e7b3",
@@ -65,8 +49,11 @@ func TestHandlerWithdrawal_Create(t *testing.T) {
 			name: "Success",
 			args: args{
 				r: func() *http.Request {
-					req, _ := http.NewRequest(http.MethodPost, "", bytes.NewBuffer(reqByte))
-					req.Header.Set("Content-Type", "application/json")
+					var param = url.Values{}
+					param.Add("reference_id", "ea0212d3-abd6-406f-8c67-868e814a2436")
+					param.Add("amount", "1000")
+					req, _ := http.NewRequest(http.MethodPost, "", strings.NewReader(param.Encode()))
+					req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 					req.Header.Set("Authorization", mockToken)
 					req = req.WithContext(mockCtx)
 					return req
@@ -74,23 +61,7 @@ func TestHandlerWithdrawal_Create(t *testing.T) {
 			},
 			patch: func() {
 				mockWithdrawalUC.EXPECT().CreateWithdrawal(gomock.Any(), mockCustomerXid, gomock.Any()).Return(mockWithdrawal, nil)
-				writerWriteData = func(ctx context.Context, w http.ResponseWriter, data interface{}) {
-				}
-			},
-		},
-		{
-			name: "Failed params diff model",
-			args: args{
-				r: func() *http.Request {
-					req, _ := http.NewRequest(http.MethodPost, "", bytes.NewBuffer(reqByte2))
-					req.Header.Set("Content-Type", "application/json")
-					req.Header.Set("Authorization", mockToken)
-					req = req.WithContext(mockCtx)
-					return req
-				}(),
-			},
-			patch: func() {
-				writerWriteJSONAPIError = func(ctx context.Context, w http.ResponseWriter, err error) {
+				writerWriteDataAccepted = func(ctx context.Context, w http.ResponseWriter, data interface{}) {
 				}
 			},
 		},
@@ -98,8 +69,10 @@ func TestHandlerWithdrawal_Create(t *testing.T) {
 			name: "Failed params empty reference",
 			args: args{
 				r: func() *http.Request {
-					req, _ := http.NewRequest(http.MethodPost, "", bytes.NewBuffer(reqByte3))
-					req.Header.Set("Content-Type", "application/json")
+					var param = url.Values{}
+					param.Add("amount", "1000")
+					req, _ := http.NewRequest(http.MethodPost, "", strings.NewReader(param.Encode()))
+					req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 					req.Header.Set("Authorization", mockToken)
 					req = req.WithContext(mockCtx)
 					return req
@@ -114,8 +87,11 @@ func TestHandlerWithdrawal_Create(t *testing.T) {
 			name: "Failed params zero amount",
 			args: args{
 				r: func() *http.Request {
-					req, _ := http.NewRequest(http.MethodPost, "", bytes.NewBuffer(reqByte4))
-					req.Header.Set("Content-Type", "application/json")
+					var param = url.Values{}
+					param.Add("reference_id", "ea0212d3-abd6-406f-8c67-868e814a2436")
+					param.Add("amount", "0")
+					req, _ := http.NewRequest(http.MethodPost, "", strings.NewReader(param.Encode()))
+					req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 					req.Header.Set("Authorization", mockToken)
 					req = req.WithContext(mockCtx)
 					return req
@@ -130,8 +106,11 @@ func TestHandlerWithdrawal_Create(t *testing.T) {
 			name: "Failed token",
 			args: args{
 				r: func() *http.Request {
-					req, _ := http.NewRequest(http.MethodPost, "", bytes.NewBuffer(reqByte))
-					req.Header.Set("Content-Type", "application/json")
+					var param = url.Values{}
+					param.Add("reference_id", "ea0212d3-abd6-406f-8c67-868e814a2436")
+					param.Add("amount", "1000")
+					req, _ := http.NewRequest(http.MethodPost, "", strings.NewReader(param.Encode()))
+					req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 					req.Header.Set("Authorization", mockToken)
 					req = req.WithContext(mockCtxEmpty)
 					return req
@@ -146,10 +125,13 @@ func TestHandlerWithdrawal_Create(t *testing.T) {
 			name: "Failed usecase",
 			args: args{
 				r: func() *http.Request {
-					req, _ := http.NewRequest(http.MethodPost, "", bytes.NewBuffer(reqByte))
-					req.Header.Set("Content-Type", "application/json")
-					req = req.WithContext(mockCtx)
+					var param = url.Values{}
+					param.Add("reference_id", "ea0212d3-abd6-406f-8c67-868e814a2436")
+					param.Add("amount", "1000")
+					req, _ := http.NewRequest(http.MethodPost, "", strings.NewReader(param.Encode()))
+					req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 					req.Header.Set("Authorization", mockToken)
+					req = req.WithContext(mockCtx)
 					return req
 				}(),
 			},

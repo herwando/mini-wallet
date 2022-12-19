@@ -130,6 +130,10 @@ func SetDefaultNewNotFound() *ErrorMessage {
 	return SetNewError(404, NotFound, NotFoundDescription)
 }
 
+func SetNewNotFound(errDesc string) *ErrorMessage {
+	return SetNewError(http.StatusNotFound, NotFound, errDesc)
+}
+
 //
 // SetNewBadRequest is function return new error message with bad request standard code(400).
 // It support to set error name and error description
